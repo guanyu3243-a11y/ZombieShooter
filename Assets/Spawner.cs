@@ -28,10 +28,11 @@ public class Spawner : MonoBehaviour
         if (alive >= maxAlive) return;
 
         timer = spawnInterval;
-
+        //spawner position
         Vector2 r = Random.insideUnitCircle.normalized * spawnRadius;
         Vector3 pos = player.position + new Vector3(r.x, 0f, r.y);
 
+        //Generate enemies
         Instantiate(enemyPrefab, pos, Quaternion.identity);
     }
 }

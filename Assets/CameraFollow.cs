@@ -22,7 +22,7 @@ public class CameraFollow : MonoBehaviour
         Vector3 desiredPos = target.position + offset;
         transform.position = Vector3.Lerp(transform.position, desiredPos, smooth * Time.deltaTime);
 
-        // 始终看着玩家
+        // Always follow the player
         transform.LookAt(target.position);
     }
 }

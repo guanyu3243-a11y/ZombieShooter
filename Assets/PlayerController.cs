@@ -16,13 +16,14 @@ public class PlayerController : MonoBehaviour
     {
         cc = GetComponent<CharacterController>();
         facingDir = Vector3.forward;
+        moveSpeed = PlayerPrefs.GetFloat("SETTINGS_SENSITIVITY", moveSpeed);
     }
 
     void Update()
     {
         fireTimer -= Time.deltaTime;
 
-        // WASD -> 世界坐标移动（上=+Z，右=+X）
+        // WASD -> movement
         float x = 0f, z = 0f;
         if (Input.GetKey(KeyCode.A)) x -= 1f;
         if (Input.GetKey(KeyCode.D)) x += 1f;
@@ -32,9 +33,9 @@ public class PlayerController : MonoBehaviour
         Vector3 input = new Vector3(x, 0f, z);
         if (input.sqrMagnitude > 0.001f)
         {
-            Vector3 dir = input.normalized;
+            Vector3 dir = input.normalized;//standardlizaing direction
 
-            // 角色朝向跟随移动方向
+            // the player's orientation follows the direction of movement
             facingDir = dir;
             transform.rotation = Quaternion.LookRotation(facingDir, Vector3.up);
 
@@ -42,7 +43,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // 不动也贴地
+            // follow the gravity
             cc.Move(Vector3.down * 2f * Time.deltaTime);
         }
 

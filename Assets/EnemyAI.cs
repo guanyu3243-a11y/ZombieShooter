@@ -14,7 +14,7 @@ public class EnemyAI : MonoBehaviour
     {
         cc = GetComponent<CharacterController>();
         GameObject p = GameObject.FindGameObjectWithTag("Player");
-        if (p != null) player = p.transform;
+        if (p != null) player = p.transform;//Save player's position
         timer = 0f;
     }
 
@@ -22,14 +22,14 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return;
 
-        // в╥вы
+        // trace
         Vector3 dir = player.position - transform.position;
         dir.y = 0f;
 
         if (dir.sqrMagnitude > 0.25f)
         {
             Vector3 moveDir = dir.normalized;
-            transform.rotation = Quaternion.LookRotation(moveDir, Vector3.up);
+            transform.rotation = Quaternion.LookRotation(moveDir, Vector3.up);//Zombie always face to player
             cc.Move((moveDir * moveSpeed + Vector3.down * 2f) * Time.deltaTime);
         }
 
@@ -42,7 +42,7 @@ public class EnemyAI : MonoBehaviour
 
         if (timer <= 0f)
         {
-            timer = tickInterval;
+            timer = tickInterval;//Reset the attack time
             Health hp = hit.collider.GetComponent<Health>();
             if (hp != null) hp.TakeDamage(damagePerTick);
         }

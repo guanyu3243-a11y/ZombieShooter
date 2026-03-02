@@ -36,6 +36,7 @@ public class Health : MonoBehaviour
 
         if (currentHP <= 0)
         {
+            //Player die
             if (CompareTag("Player"))
             {
                 Debug.Log("GAME OVER");
@@ -44,7 +45,7 @@ public class Health : MonoBehaviour
             }
             else
             {
-                // µÐÈËËÀÍö¼Ó·Ö
+                // Enemy Die,Score system
                 isDead = true;
 
                 if (UIManager.Instance != null) UIManager.Instance.AddScore(10);

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4805407725352576828}
   - component: {fileID: 3721097949799850336}
   - component: {fileID: 276051505728064288}
+  - component: {fileID: 5881163587292980258}
   m_Layer: 0
   m_Name: Enemy_new
   m_TagString: Enemy
@@ -29,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 104011634574915074}
@@ -90,6 +91,27 @@ MonoBehaviour:
   moveSpeed: 3
   damagePerTick: 10
   tickInterval: 1
+--- !u!95 &5881163587292980258
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3987117100405057966}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: c3ac893e8c763c244a0fc52854d1cc0e, type: 3}
+  m_Controller: {fileID: 9100000, guid: 6f7bccd467fa9d84a8f4d62d0b106815, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7952029439080541742
 GameObject:
   m_ObjectHideFlags: 0
@@ -189,12 +211,13 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: c3ac893e8c763c244a0fc52854d1cc0e, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: a3a15a6c161e54e498f44fc284c617af, type: 2}
+      objectReference: {fileID: 9100000, guid: 6f7bccd467fa9d84a8f4d62d0b106815, type: 2}
     - target: {fileID: 5866666021909216657, guid: c3ac893e8c763c244a0fc52854d1cc0e, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5866666021909216657, guid: c3ac893e8c763c244a0fc52854d1cc0e, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
