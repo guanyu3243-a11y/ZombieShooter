@@ -29,11 +29,11 @@ The player must survive against continuously attacking zombies while managing he
 ---
 
 ## Game Mechanics Implemented
-- A simple Enemy animation system
+- A simple Enemy attack animation system
 - Enemy AI behaviour
-- UI system
+- Two Scenes-Game and Menu
 - Game state management
-- Player health system
+- Player health and score system
 
 ---
 
