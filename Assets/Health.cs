@@ -61,7 +61,7 @@ public class Health : MonoBehaviour
                 CharacterController cc = GetComponent<CharacterController>();
                 if (cc != null) cc.enabled = false;
 
-                Destroy(gameObject, 4f);
+                Destroy(gameObject, 3f);
             }
         }
     }
