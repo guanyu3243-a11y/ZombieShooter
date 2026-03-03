@@ -10,7 +10,7 @@ The player must survive against continuously attacking zombies while managing he
 ## Features
 - 3D player movement and shooting system
 - Zombie AI chasing behaviour
-- Zombie attack animation
+- Zombie attack and death animation
 - Health and damage system
 - Score system
 - Pause Menu (ESC)
