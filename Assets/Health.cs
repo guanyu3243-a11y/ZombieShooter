@@ -18,6 +18,11 @@ public class Health : MonoBehaviour
             UIManager.Instance.SetHP(currentHP);
         }
     }
+    public void SetMaxHP(int newMaxHP)
+    {
+        maxHP = newMaxHP;
+        currentHP = newMaxHP;
+    }
 
     public void TakeDamage(int amount)
     {
@@ -49,6 +54,12 @@ public class Health : MonoBehaviour
                 isDead = true;
 
                 if (UIManager.Instance != null) UIManager.Instance.AddScore(10);
+
+                WaveManager waveManager = FindFirstObjectByType<WaveManager>();
+                if (waveManager != null)
+                {
+                    waveManager.EnemyKilled();
+                }
 
                 if (anim != null) anim.SetTrigger("Dead");
 
