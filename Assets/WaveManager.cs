@@ -104,6 +104,17 @@ public class WaveManager : MonoBehaviour
     IEnumerator BeginNextWaveAfterDelay()
     {
         yield return new WaitForSeconds(timeBetweenWaves);
-        StartNextWave();
+
+        if (currentWave % 3 == 0)
+        {
+            if (SkillSelectionManager.Instance != null)
+            {
+                SkillSelectionManager.Instance.OpenSkillSelection();
+            }
+        }
+        else
+        {
+            StartNextWave();
+        }
     }
 }

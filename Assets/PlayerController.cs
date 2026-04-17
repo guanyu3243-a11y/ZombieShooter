@@ -56,7 +56,14 @@ public class PlayerController : MonoBehaviour
         if (fireTimer > 0f) return;
         if (bulletPrefab == null) return;
 
-        fireTimer = fireCooldown;
+        float finalCooldown = fireCooldown;
+
+        if (PlayerStats.Instance != null)
+        {
+            finalCooldown = fireCooldown / PlayerStats.Instance.fireRateMultiplier;
+        }
+
+        fireTimer = finalCooldown;
         var b = Instantiate(bulletPrefab, transform.position + Vector3.up * 0.8f, Quaternion.identity);
         var rb = b.GetComponent<Rigidbody>();
         if (rb != null) rb.velocity = facingDir * bulletSpeed;

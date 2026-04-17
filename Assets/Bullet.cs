@@ -17,7 +17,15 @@ public class Bullet : MonoBehaviour
         Health h = other.GetComponent<Health>();
         if (h != null)
         {
-            h.TakeDamage(damage);
+            int finalDamage = damage;
+
+            if (PlayerStats.Instance != null)
+            {
+                finalDamage = Mathf.RoundToInt(damage * PlayerStats.Instance.bulletDamageMultiplier);
+            }
+
+            h.TakeDamage(finalDamage);
+            Debug.Log("Bullet Damage: " + finalDamage);
         }
 
         Destroy(gameObject);
