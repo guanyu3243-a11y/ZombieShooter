@@ -18,14 +18,41 @@ public class Bullet : MonoBehaviour
         if (h != null)
         {
             int finalDamage = damage;
+            bool isCritical = false;
 
             if (PlayerStats.Instance != null)
             {
                 finalDamage = Mathf.RoundToInt(damage * PlayerStats.Instance.bulletDamageMultiplier);
+
+                // ? ±©»÷ÅÐ¶Ï
+                if (Random.value < PlayerStats.Instance.critChance)
+                {
+                    finalDamage = Mathf.RoundToInt(finalDamage * PlayerStats.Instance.critMultiplier);
+                    isCritical = true;
+                }
             }
 
             h.TakeDamage(finalDamage);
-            Debug.Log("Bullet Damage: " + finalDamage);
+            
+
+            // ? ÌáÊ¾
+            if (isCritical)
+            {
+                Debug.Log("CRITICAL HIT! Damage: " + finalDamage);
+
+            }
+            else
+            {
+                Debug.Log("Bullet Damage: " + finalDamage);
+            }
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowDamageText(
+                    finalDamage,
+                    isCritical,
+                    other.transform.position + Vector3.up * 2f
+                );
+            }
         }
 
         Destroy(gameObject);

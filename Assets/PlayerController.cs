@@ -2,16 +2,22 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Dash")]
+    public float dashDistance = 5f;
+    public float dashCooldown = 5f;
+    private float dashTimer = 0f;
+
     public float moveSpeed = 6f;
 
     public GameObject bulletPrefab;
     public float bulletSpeed = 14f;
-    public float fireCooldown = 0.2f;
+    public float fireCooldown = 0.5f;
 
     private CharacterController cc;
     private Vector3 facingDir;
     private float fireTimer;
-
+    public AudioSource audioSource;
+    public AudioClip shootClip;
     void Start()
     {
         cc = GetComponent<CharacterController>();
@@ -22,7 +28,11 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         fireTimer -= Time.deltaTime;
-
+        if (dashTimer > 0f)
+        {
+            dashTimer -= Time.deltaTime;
+        }
+        HandleDash();
         // WASD -> movement
         float x = 0f, z = 0f;
         if (Input.GetKey(KeyCode.A)) x -= 1f;
@@ -39,7 +49,13 @@ public class PlayerController : MonoBehaviour
             facingDir = dir;
             transform.rotation = Quaternion.LookRotation(facingDir, Vector3.up);
 
-            cc.Move((dir * moveSpeed + Vector3.down * 2f) * Time.deltaTime);
+            float finalMoveSpeed = moveSpeed;
+            if (PlayerStats.Instance != null)
+            {
+                finalMoveSpeed = moveSpeed * PlayerStats.Instance.moveSpeedMultiplier;
+            }
+
+            cc.Move((dir * finalMoveSpeed + Vector3.down * 2f) * Time.deltaTime);
         }
         else
         {
@@ -64,8 +80,50 @@ public class PlayerController : MonoBehaviour
         }
 
         fireTimer = finalCooldown;
+        if (audioSource != null && shootClip != null)
+        {
+            audioSource.PlayOneShot(shootClip);
+        }
+        if (PlayerStats.Instance != null && PlayerStats.Instance.multiShotUnlocked)
+        {
+            ShootBullet(facingDir);
+            ShootBullet(Quaternion.Euler(0, -15, 0) * facingDir);
+            ShootBullet(Quaternion.Euler(0, 15, 0) * facingDir);
+        }
+        else
+        {
+            ShootBullet(facingDir);
+        }
+    }
+    void ShootBullet(Vector3 direction)
+    {
         var b = Instantiate(bulletPrefab, transform.position + Vector3.up * 0.8f, Quaternion.identity);
         var rb = b.GetComponent<Rigidbody>();
-        if (rb != null) rb.velocity = facingDir * bulletSpeed;
+
+        if (rb != null)
+        {
+            rb.velocity = direction.normalized * bulletSpeed;
+        }
+    }
+    void HandleDash()
+    {
+        if (PlayerStats.Instance == null) return;
+        if (!PlayerStats.Instance.dashUnlocked) return;
+        if (dashTimer > 0f) return;
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Vector3 dashDir = facingDir;
+
+            if (dashDir.sqrMagnitude < 0.01f)
+            {
+                dashDir = transform.forward;
+            }
+
+            cc.Move(dashDir.normalized * dashDistance);
+            dashTimer = dashCooldown;
+
+            Debug.Log("Dash!");
+        }
     }
 }

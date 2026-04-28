@@ -4,6 +4,11 @@ using TMPro;
 
 public class WaveManager : MonoBehaviour
 {
+    [Header("Spawn Around Player")]
+    public Transform player;
+    public float minSpawnDistance = 10f;
+    public float maxSpawnDistance = 16f;
+
     [Header("Wave Settings")]
     public int currentWave = 0;
     public int baseEnemyCount = 5;
@@ -58,9 +63,27 @@ public class WaveManager : MonoBehaviour
             return;
         }
 
-        Transform randomSpawn = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        GameObject enemy = Instantiate(enemyPrefab, randomSpawn.position, randomSpawn.rotation);
+        Vector3 spawnPosition = GetSpawnPositionAroundPlayer();
+        GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        Vector3 GetSpawnPositionAroundPlayer()
+        {
+            if (player == null)
+            {
+                Debug.LogWarning("Player not assigned in WaveManager.");
+                return Vector3.zero;
+            }
 
+            Vector2 randomCircle = Random.insideUnitCircle.normalized;
+            float randomDistance = Random.Range(minSpawnDistance, maxSpawnDistance);
+
+            Vector3 spawnOffset = new Vector3(
+                randomCircle.x * randomDistance,
+                0f,
+                randomCircle.y * randomDistance
+            );
+
+            return player.position + spawnOffset;
+        }
         // ===== 难度成长公式 =====
         int enemyHP = 100 + (currentWave - 1) * 20;
         int enemyDamage = 10 + (currentWave - 1) * 2;

@@ -6,13 +6,25 @@ public class Health : MonoBehaviour
     public int currentHP;
     private Animator anim;
     private bool isDead = false;
-
+    private Renderer[] renderers;
+    private Color[] originalColors;
+    private bool isFlashing = false;
 
     void Awake()
     {
         currentHP = maxHP;
         anim = GetComponent<Animator>();
 
+        renderers = GetComponentsInChildren<Renderer>();
+        originalColors = new Color[renderers.Length];
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i].material.HasProperty("_Color"))
+            {
+                originalColors[i] = renderers[i].material.color;
+            }
+        }
         if (CompareTag("Player") && UIManager.Instance != null)
         {
             UIManager.Instance.SetHP(currentHP);
@@ -32,7 +44,10 @@ public class Health : MonoBehaviour
         {
             anim.SetTrigger("Hit");
         }
-
+        if (!CompareTag("Player"))
+        {
+            StartCoroutine(HitFlash());
+        }
 
         if (CompareTag("Player") && UIManager.Instance != null)
         {
@@ -75,5 +90,30 @@ public class Health : MonoBehaviour
                 Destroy(gameObject, 3f);
             }
         }
+    }
+    private System.Collections.IEnumerator HitFlash()
+    {
+        if (isFlashing) yield break;
+        isFlashing = true;
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i] != null && renderers[i].material.HasProperty("_Color"))
+            {
+                renderers[i].material.color = new Color(1f,0.3f,0.3f);
+            }
+        }
+
+        yield return new WaitForSeconds(0.08f);
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i] != null && renderers[i].material.HasProperty("_Color"))
+            {
+                renderers[i].material.color = originalColors[i];
+            }
+        }
+
+        isFlashing = false;
     }
 }

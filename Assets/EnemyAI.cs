@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -7,44 +8,52 @@ public class EnemyAI : MonoBehaviour
     public float tickInterval = 1f;
 
     private Transform player;
-    private CharacterController cc;
+    private NavMeshAgent agent;
     private float timer;
 
     void Start()
     {
-        cc = GetComponent<CharacterController>();
+        agent = GetComponent<NavMeshAgent>();
+
         GameObject p = GameObject.FindGameObjectWithTag("Player");
-        if (p != null) player = p.transform;//Save player's position
+        if (p != null) player = p.transform;
+
+        if (agent != null)
+        {
+            agent.speed = moveSpeed;
+            agent.stoppingDistance = 1.2f;
+        }
+
         timer = 0f;
     }
 
     void Update()
     {
-        if (player == null) return;
+        if (player == null || agent == null) return;
 
-        // trace
-        Vector3 dir = player.position - transform.position;
-        dir.y = 0f;
-
-        if (dir.sqrMagnitude > 0.25f)
-        {
-            Vector3 moveDir = dir.normalized;
-            transform.rotation = Quaternion.LookRotation(moveDir, Vector3.up);//Zombie always face to player
-            cc.Move((moveDir * moveSpeed + Vector3.down * 2f) * Time.deltaTime);
-        }
+        agent.speed = moveSpeed;
+        agent.SetDestination(player.position);
 
         timer -= Time.deltaTime;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (distance <= agent.stoppingDistance + 0.3f)
+        {
+            TryAttackPlayer();
+        }
     }
 
-    void OnControllerColliderHit(ControllerColliderHit hit)
+    void TryAttackPlayer()
     {
-        if (!hit.collider.CompareTag("Player")) return;
+        if (timer > 0f) return;
 
-        if (timer <= 0f)
+        timer = tickInterval;
+
+        Health hp = player.GetComponent<Health>();
+        if (hp != null)
         {
-            timer = tickInterval;//Reset the attack time
-            Health hp = hit.collider.GetComponent<Health>();
-            if (hp != null) hp.TakeDamage(damagePerTick);
+            hp.TakeDamage(damagePerTick);
         }
     }
 }
