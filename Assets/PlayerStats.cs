@@ -11,6 +11,7 @@ public class PlayerStats : MonoBehaviour
     public float moveSpeedMultiplier = 1f;
     public bool dashUnlocked = false;
     public bool multiShotUnlocked = false;
+    public bool enemySlowUnlocked = false;
     public float critChance = 0f;
     public float critMultiplier = 2f;
 
@@ -94,6 +95,12 @@ public class PlayerStats : MonoBehaviour
         multiShotUnlocked = true;
         AddSkillRecord("Multi Shot");
         Debug.Log("Multi Shot Unlocked");
+    }
+    public void UnlockEnemySlow()
+    {
+        enemySlowUnlocked = true;
+        AddSkillRecord("Enemy Slow");
+        Debug.Log("Enemy Slow Unlocked");
     }
     void AddSkillRecord(string skillName)
     {

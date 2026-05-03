@@ -11,5 +11,6 @@ public enum SkillType
     MoveSpeedUp,
     DashUnlock,
     MultiShot,
-    CriticalHit
+    CriticalHit,
+    EnemySlow
 }

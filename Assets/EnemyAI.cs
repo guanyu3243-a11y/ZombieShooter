@@ -9,6 +9,7 @@ public class EnemyAI : MonoBehaviour
 
     private Transform player;
     private NavMeshAgent agent;
+    private Animator anim;
     private float timer;
 
     void Start()
@@ -49,6 +50,10 @@ public class EnemyAI : MonoBehaviour
         if (timer > 0f) return;
 
         timer = tickInterval;
+        if (anim != null)
+        {
+            anim.SetTrigger("Attack");
+        }
 
         Health hp = player.GetComponent<Health>();
         if (hp != null)

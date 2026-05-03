@@ -12,7 +12,7 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Enemy")) return;
+        if (!other.CompareTag("Enemy") && !other.CompareTag("SummonedEnemy")) return;
 
         Health h = other.GetComponent<Health>();
         if (h != null)

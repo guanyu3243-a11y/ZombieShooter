@@ -24,9 +24,9 @@ public class SkillSelectionManager : MonoBehaviour
         Instance = this;
     }
 
-    public void OpenSkillSelection()
+    public void OpenSmallSkillSelection()
     {
-        GenerateRandomSkills();
+        GenerateSmallSkills();
 
         if (audioSource != null && openSkillPanelClip != null)
         {
@@ -40,19 +40,17 @@ public class SkillSelectionManager : MonoBehaviour
         }
     }
 
-    void GenerateRandomSkills()
+    void GenerateSmallSkills()
     {
         List<SkillType> skillPool = new List<SkillType>
-        {
-            SkillType.DamageUp,
-            SkillType.FireRateUp,
-            SkillType.Heal,
-            SkillType.MaxHPUp,
-            SkillType.MoveSpeedUp,
-            SkillType.DashUnlock,
-            SkillType.MultiShot,
-            SkillType.CriticalHit
-        };
+    {
+        SkillType.DamageUp,
+        SkillType.FireRateUp,
+        SkillType.MoveSpeedUp,
+        SkillType.CriticalHit,
+        SkillType.Heal,
+        SkillType.MaxHPUp
+    };
 
         Shuffle(skillPool);
 
@@ -60,11 +58,42 @@ public class SkillSelectionManager : MonoBehaviour
         button2Skill = skillPool[1];
         button3Skill = skillPool[2];
 
-        if (button1Text != null) button1Text.text = GetSkillName(button1Skill);
-        if (button2Text != null) button2Text.text = GetSkillName(button2Skill);
-        if (button3Text != null) button3Text.text = GetSkillName(button3Skill);
+        button1Text.text = GetSkillName(button1Skill);
+        button2Text.text = GetSkillName(button2Skill);
+        button3Text.text = GetSkillName(button3Skill);
+    }
+    public void OpenMajorSkillSelection()
+    {
+        GenerateMajorSkills();
+        if (audioSource != null && openSkillPanelClip != null)
+            audioSource.PlayOneShot(openSkillPanelClip);
+        skillPanel.SetActive(true);
+        Time.timeScale = 0f;
     }
 
+    void GenerateMajorSkills()
+    {
+        List<SkillType> majorSkillPool = new List<SkillType>();
+
+        if (!PlayerStats.Instance.multiShotUnlocked)
+            majorSkillPool.Add(SkillType.MultiShot);
+
+        if (!PlayerStats.Instance.dashUnlocked)
+            majorSkillPool.Add(SkillType.DashUnlock);
+
+        if (!PlayerStats.Instance.enemySlowUnlocked)
+            majorSkillPool.Add(SkillType.EnemySlow);
+
+        Shuffle(majorSkillPool);
+
+        button1Skill = majorSkillPool[0];
+        button2Skill = majorSkillPool[1];
+        button3Skill = majorSkillPool[2];
+
+        button1Text.text = GetSkillName(button1Skill);
+        button2Text.text = GetSkillName(button2Skill);
+        button3Text.text = GetSkillName(button3Skill);
+    }
     string GetSkillName(SkillType skill)
     {
         switch (skill)
@@ -92,6 +121,9 @@ public class SkillSelectionManager : MonoBehaviour
 
             case SkillType.CriticalHit:
                 return "Critical Hit";
+
+            case SkillType.EnemySlow:
+                return "Enemy Slow";
 
             default:
                 return "Unknown Skill";
@@ -135,6 +167,10 @@ public class SkillSelectionManager : MonoBehaviour
 
             case SkillType.CriticalHit:
                 PlayerStats.Instance.IncreaseCriticalChance(0.15f);
+                break;
+
+            case SkillType.EnemySlow:
+                PlayerStats.Instance.UnlockEnemySlow();
                 break;
         }
     }

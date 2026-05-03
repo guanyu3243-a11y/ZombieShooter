@@ -68,14 +68,22 @@ public class Health : MonoBehaviour
                 // Enemy Die,Score system
                 isDead = true;
 
-                if (UIManager.Instance != null) UIManager.Instance.AddScore(10);
 
-                WaveManager waveManager = FindFirstObjectByType<WaveManager>();
-                if (waveManager != null)
+                if (!CompareTag("SummonedEnemy"))
                 {
-                    waveManager.EnemyKilled();
+                    WaveManager waveManager = FindFirstObjectByType<WaveManager>();
+                    if (waveManager != null)
+                    {
+                        waveManager.EnemyKilled();
+                    }
                 }
-
+                if (GetComponent<SummonerBossAI>() != null)
+                {
+                    if (BossHealthBarUI.Instance != null)
+                    {
+                        BossHealthBarUI.Instance.HideBossHealth();
+                    }
+                }
                 if (anim != null) anim.SetTrigger("Dead");
 
                 EnemyAI ai = GetComponent<EnemyAI>();
@@ -87,6 +95,11 @@ public class Health : MonoBehaviour
                 CharacterController cc = GetComponent<CharacterController>();
                 if (cc != null) cc.enabled = false;
 
+                SummonerBossAI summoner = GetComponent<SummonerBossAI>();
+                if (summoner != null)
+                {
+                    summoner.ClearSummonedEnemies();
+                }
                 Destroy(gameObject, 3f);
             }
         }
