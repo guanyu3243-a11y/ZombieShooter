@@ -6,6 +6,9 @@ public class PlayerController : MonoBehaviour
     public float dashDistance = 5f;
     public float dashCooldown = 5f;
     private float dashTimer = 0f;
+    public float DashTimer => dashTimer; 
+    public float DashCooldown => dashCooldown;
+    
 
     public float moveSpeed = 6f;
 
@@ -18,19 +21,28 @@ public class PlayerController : MonoBehaviour
     private float fireTimer;
     public AudioSource audioSource;
     public AudioClip shootClip;
+    public AudioClip slowClip;
     void Start()
     {
         cc = GetComponent<CharacterController>();
         facingDir = Vector3.forward;
-        moveSpeed = PlayerPrefs.GetFloat("SETTINGS_SENSITIVITY", moveSpeed);
+        //moveSpeed = PlayerPrefs.GetFloat("SETTINGS_SENSITIVITY", moveSpeed);
     }
 
     void Update()
     {
         fireTimer -= Time.deltaTime;
         if (dashTimer > 0f)
+        if (dashTimer > 0f)
         {
             dashTimer -= Time.deltaTime;
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (PlayerStats.Instance != null)
+            {
+                PlayerStats.Instance.TryUseEnemySlow();
+            }
         }
         HandleDash();
         // WASD -> movement

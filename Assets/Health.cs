@@ -40,6 +40,8 @@ public class Health : MonoBehaviour
     {
         if (isDead) return;
         currentHP -= amount;
+        currentHP = Mathf.Max(0, currentHP);
+
         if (!CompareTag("Player") && anim != null)
         {
             anim.SetTrigger("Hit");
@@ -56,6 +58,8 @@ public class Health : MonoBehaviour
 
         if (currentHP <= 0)
         {
+            currentHP = 0;
+            isDead = true;
             //Player die
             if (CompareTag("Player"))
             {

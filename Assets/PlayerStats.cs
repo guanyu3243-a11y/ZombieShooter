@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
     public static PlayerStats Instance;
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip enemySlowClip;
 
     [Header("Player Stats")]
     public float bulletDamageMultiplier = 1f;
@@ -14,11 +18,20 @@ public class PlayerStats : MonoBehaviour
     public bool enemySlowUnlocked = false;
     public float critChance = 0f;
     public float critMultiplier = 2f;
+    public float enemySlowMultiplier = 0.4f; // 敌人变成40%速度
+    public float enemySlowDuration = 5f;
+    public float enemySlowCooldown = 5f;
+    private float enemySlowTimer = 0f;
+
+    public float EnemySlowTimer => enemySlowTimer;
+    public float EnemySlowCooldown => enemySlowCooldown;
+    private bool enemySlowReady = true;
 
     private List<string> acquiredSkills = new List<string>();
 
     void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         Instance = this;
     }
 
@@ -101,6 +114,54 @@ public class PlayerStats : MonoBehaviour
         enemySlowUnlocked = true;
         AddSkillRecord("Enemy Slow");
         Debug.Log("Enemy Slow Unlocked");
+    }
+    public bool TryUseEnemySlow()
+    {
+        if (!enemySlowUnlocked) return false;
+        if (!enemySlowReady) return false;
+        if (enemySlowTimer > 0) return false;
+
+        StartCoroutine(EnemySlowRoutine());
+        enemySlowTimer = enemySlowCooldown;
+
+        if (audioSource != null && enemySlowClip != null)
+        {
+            audioSource.PlayOneShot(enemySlowClip);
+        }
+
+        return true;
+    }
+    void Update()
+    {
+        if (enemySlowTimer > 0f)
+        {
+            enemySlowTimer -= Time.deltaTime;
+        }
+    }
+    private IEnumerator EnemySlowRoutine()
+    {
+        enemySlowReady = false;
+
+        EnemyAI[] enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
+
+        foreach (EnemyAI enemy in enemies)
+        {
+            enemy.moveSpeed *= enemySlowMultiplier;
+        }
+
+        yield return new WaitForSeconds(enemySlowDuration);
+
+        foreach (EnemyAI enemy in enemies)
+        {
+            if (enemy != null)
+            {
+                enemy.moveSpeed /= enemySlowMultiplier;
+            }
+        }
+
+        yield return new WaitForSeconds(enemySlowCooldown);
+
+        enemySlowReady = true;
     }
     void AddSkillRecord(string skillName)
     {

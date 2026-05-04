@@ -16,7 +16,8 @@ public class WaveManager : MonoBehaviour
     [Header("Wave Settings")]
     public int currentWave = 0;
     public int baseEnemyCount = 5;
-    public float timeBetweenWaves = 3f;
+    public float normalWaveDelay = 3f;
+    public float bossWaveDelay = 6f;
 
     [Header("Enemy Settings")]
     public GameObject enemyPrefab;
@@ -66,7 +67,7 @@ public class WaveManager : MonoBehaviour
 
         if (currentWave == 3)
         {
-            bossPrefab = summonerBossPrefab;
+            bossPrefab = heavyBossPrefab;
         }
         else if (currentWave == 5)
         {
@@ -172,7 +173,8 @@ public class WaveManager : MonoBehaviour
 
     IEnumerator BeginNextWaveAfterDelay()
     {
-        yield return new WaitForSeconds(timeBetweenWaves);
+        float delay = IsBossWave(currentWave) ? bossWaveDelay : normalWaveDelay;
+        yield return new WaitForSeconds(delay);
 
         if (currentWave % 2 == 0)
         {
