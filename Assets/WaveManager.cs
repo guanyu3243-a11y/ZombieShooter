@@ -48,16 +48,12 @@ public class WaveManager : MonoBehaviour
             SpawnBossWave();
             return;
         }
-        int enemiesToSpawn = baseEnemyCount + (currentWave - 1) * 2;
+        int enemiesToSpawn = baseEnemyCount + Mathf.FloorToInt((currentWave - 1) * 1.2f);
         StartCoroutine(SpawnWave(enemiesToSpawn));
     }
     bool IsBossWave(int wave)
     {
-        if (wave == 3) return true;  // 第一次Boss
-        if (wave == 5) return true;  // 第二次Boss
-        if (wave >= 10 && wave % 10 == 0) return true; // 后面循环
-
-        return false;
+        return wave % 10 == 0;
     }
     void SpawnBossWave()
     {
@@ -65,13 +61,13 @@ public class WaveManager : MonoBehaviour
 
         GameObject bossPrefab = null;
 
-        if (currentWave == 3)
-        {
-            bossPrefab = heavyBossPrefab;
-        }
-        else if (currentWave == 5)
+        if (currentWave == 10)
         {
             bossPrefab = summonerBossPrefab;
+        }
+        else if (currentWave == 20)
+        {
+            bossPrefab = heavyBossPrefab;
         }
         else
         {
@@ -81,12 +77,47 @@ public class WaveManager : MonoBehaviour
         Vector3 spawnPosition = GetSpawnPositionAroundPlayer();
         GameObject boss = Instantiate(bossPrefab, spawnPosition, Quaternion.identity);
 
+        HeavyBossAI heavy = boss.GetComponent<HeavyBossAI>();
+        if (heavy != null)
+        {
+            int bossLevel = Mathf.Max(0, currentWave/10 - 1);
+
+            heavy.attackDamage = 30 + bossLevel * 10;
+            heavy.attackCooldown = Mathf.Max(1f, 2f - bossLevel * 0.03f);
+
+            heavy.dashDamage = 50 + bossLevel * 15;
+            heavy.dashCooldown = Mathf.Max(3f, 6f - bossLevel * 0.05f);
+            heavy.dashSpeed = 15 + bossLevel * 1.5f;
+            heavy.dashDuration = Mathf.Min(1.2f, 0.4f + bossLevel * 0.06f);
+        }
+
+        SummonerBossAI summoner = boss.GetComponent<SummonerBossAI>();
+        if (summoner != null)
+        {
+            int bossLevel = Mathf.Max(0, currentWave / 10 - 1);
+
+            summoner.attackDamage = 20 + bossLevel * 5;
+            summoner.attackCooldown = Mathf.Max(1.2f, 2f - bossLevel * 0.1f);
+
+            summoner.summonCount = 2 + bossLevel;
+            summoner.baseSummonInterval = Mathf.Max(3f, 5f - bossLevel * 0.3f);
+            summoner.lowHpSummonInterval = Mathf.Max(2f, 2.5f - bossLevel * 0.2f);
+        }
+
         Health bossHealth = boss.GetComponent<Health>();
         if (bossHealth != null && BossHealthBarUI.Instance != null)
         {
             BossHealthBarUI.Instance.ShowBossHealth(bossHealth, boss.name);
         }
+        if (heavy != null)
+        {
+            bossHealth.SetMaxHP(500 + currentWave * 60);
+        }
 
+        if (summoner != null)
+        {
+            bossHealth.SetMaxHP(350 + currentWave * 45);
+        }
         Debug.Log("Boss Wave: " + currentWave);
     }
 
@@ -132,8 +163,8 @@ public class WaveManager : MonoBehaviour
 
       
         // ===== 难度成长公式 =====
-        int enemyHP = 100 + (currentWave - 1) * 20;
-        int enemyDamage = 10 + (currentWave - 1) * 2;
+        int enemyHP = 100 + (currentWave - 1) * 10;
+        int enemyDamage = 10 + (currentWave - 1);
         float enemySpeed = 3f + (currentWave - 1) * 0.2f;
         float attackInterval = Mathf.Max(0.3f, 1f - currentWave * 0.05f); // 越高越快攻击
 
@@ -176,21 +207,22 @@ public class WaveManager : MonoBehaviour
         float delay = IsBossWave(currentWave) ? bossWaveDelay : normalWaveDelay;
         yield return new WaitForSeconds(delay);
 
-        if (currentWave % 2 == 0)
+        // Boss前一波
+        if ((currentWave + 1) % 10 == 0)
         {
-            // Boss前一波
-            if ((currentWave + 1) % 5 == 0)
-            {
+            if (SkillSelectionManager.Instance.HasMajorSkillsLeft())
                 SkillSelectionManager.Instance.OpenMajorSkillSelection();
-            }
             else
-            {
-                SkillSelectionManager.Instance.OpenSmallSkillSelection();
-            }
+                StartNextWave();
+        }
+        else if (currentWave % 2 == 0)
+        {
+            SkillSelectionManager.Instance.OpenSmallSkillSelection();
         }
         else
         {
             StartNextWave();
         }
     }
-}
+       
+    }

@@ -8,6 +8,7 @@ public class SummonerBossAI : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip summonClip;
     public AudioClip attackClip;
+    public AudioClip deathClip;
 
     [Header("Summon Settings")]
     public GameObject enemyPrefab;
@@ -28,6 +29,12 @@ public class SummonerBossAI : MonoBehaviour
     private bool isSummoning = true;
     private bool isCasting = false;
     private List<GameObject> summonedEnemies = new List<GameObject>();
+    private const string KEY_SFX = "SETTINGS_SFX";
+
+    private float GetSFXVolume()
+    {
+        return PlayerPrefs.GetFloat(KEY_SFX, 1f);
+    }
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -56,6 +63,9 @@ public class SummonerBossAI : MonoBehaviour
 
             if (health == null || health.currentHP <= 0)
             {
+                if (audioSource != null && deathClip != null)
+                    audioSource.PlayOneShot(deathClip, GetSFXVolume());
+
                 yield break;
             }
 
@@ -74,7 +84,7 @@ public class SummonerBossAI : MonoBehaviour
         }
         if (audioSource != null && summonClip != null)
         {
-            audioSource.PlayOneShot(summonClip);
+            audioSource.PlayOneShot(summonClip, GetSFXVolume());
         }
 
         yield return new WaitForSeconds(0.8f);

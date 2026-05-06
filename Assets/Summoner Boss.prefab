@@ -168,6 +168,7 @@ MonoBehaviour:
   audioSource: {fileID: -2089618080045482156}
   summonClip: {fileID: 8300000, guid: adcac75087a17704ca6c0c3b15bc3aa5, type: 3}
   attackClip: {fileID: 0}
+  deathClip: {fileID: 8300000, guid: 69812e02fdf6c421a938309cc2d45922, type: 3}
   enemyPrefab: {fileID: 3987117100405057966, guid: 8cbfbc452eb45c74e9b501eff0b17e01, type: 3}
   summonCount: 2
   baseSummonInterval: 5

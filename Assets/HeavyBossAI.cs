@@ -9,6 +9,8 @@ public class HeavyBossAI : MonoBehaviour
     public AudioClip dashWarningClip;
     public AudioClip dashClip;
     public AudioClip attackClip;
+    public AudioClip runClip;
+    public AudioClip deathClip;
 
     [Header("Attack Settings")]
     public float attackRange = 2.5f;
@@ -24,6 +26,7 @@ public class HeavyBossAI : MonoBehaviour
     public GameObject dashWarningPrefab;
     public float warningLength = 10f;
     public float warningWidth = 2f;
+    public float dashHitRange = 1.5f;
 
     private Transform player;
     private Health health;
@@ -35,6 +38,14 @@ public class HeavyBossAI : MonoBehaviour
     private bool isDashing = false;
     private bool isDead = false;
     private bool isAttacking = false;
+    private bool isPlayingRun = false;
+
+    private const string KEY_SFX = "SETTINGS_SFX";
+
+    private float GetSFXVolume()
+    {
+        return PlayerPrefs.GetFloat(KEY_SFX, 1f);
+    }
 
     void Start()
     {
@@ -58,10 +69,21 @@ public class HeavyBossAI : MonoBehaviour
 
         if (health != null && health.currentHP <= 0)
         {
-            isDead = true;
+            if (!isDead)
+            {
+                isDead = true;
 
-            if (anim != null)
-                anim.SetTrigger("Dead");
+                // Í£Ö¹ÅÜ²½Éù
+                if (audioSource != null)
+                    audioSource.Stop();
+
+                // ? ²¥·ÅËÀÍöÒôÐ§
+                if (audioSource != null && deathClip != null)
+                    audioSource.PlayOneShot(deathClip, GetSFXVolume());
+
+                if (anim != null)
+                    anim.SetTrigger("Dead");
+            }
 
             return;
         }
@@ -72,6 +94,23 @@ public class HeavyBossAI : MonoBehaviour
         if (!isDashing && !isAttacking && agent != null)
         {
             agent.SetDestination(player.position);
+            // ? ²¥·ÅÅÜ²½Éù
+            if (!isPlayingRun && runClip != null)
+            {
+                audioSource.clip = runClip;
+                audioSource.loop = true;
+                audioSource.Play();
+                isPlayingRun = true;
+            }
+        }
+        else
+        {
+            // ? Í£Ö¹ÅÜ²½Éù
+            if (isPlayingRun)
+            {
+                audioSource.Stop();
+                isPlayingRun = false;
+            }
         }
 
         // ? ¸üÐÂ¶¯»­Speed
@@ -137,7 +176,7 @@ public class HeavyBossAI : MonoBehaviour
         Debug.Log("Heavy Boss dash warning!");
         if (audioSource != null && dashWarningClip != null)
         {
-            audioSource.PlayOneShot(dashWarningClip);
+            audioSource.PlayOneShot(dashWarningClip, GetSFXVolume());
         }
 
         Vector3 dashDir = player.position - transform.position;
@@ -148,41 +187,44 @@ public class HeavyBossAI : MonoBehaviour
 
         if (dashWarningPrefab != null)
         {
-            Vector3 warningPos = transform.position + dashDir * (warningLength / 2f);
+            float actualWarningLength = dashSpeed * dashDuration;
+
+            Vector3 warningPos = transform.position + dashDir * (actualWarningLength / 2f);
             warningPos.y = 0.05f;
 
             warning = Instantiate(dashWarningPrefab, warningPos, Quaternion.LookRotation(dashDir));
-            warning.transform.localScale = new Vector3(warningWidth, 0.05f, warningLength);
+            warning.transform.localScale = new Vector3(warningWidth, 0.05f, actualWarningLength);
         }
 
         yield return new WaitForSeconds(dashWarningTime);
         if (audioSource != null && dashClip != null)
         {
-            audioSource.PlayOneShot(dashClip);
+            audioSource.PlayOneShot(dashClip, GetSFXVolume());
         }
 
         if (warning != null)
         {
             Destroy(warning);
         }
-
-        float timer = 0f;
         bool hitPlayer = false;
-
+        float timer = 0f;
+        Health playerHealth = player.GetComponent<Health>();
+        if (playerHealth == null)
+        {
+            yield break;
+        }
+  
         while (timer < dashDuration)
         {
-            Vector3 move = dashDir * dashSpeed * Time.deltaTime;
-            agent.Move(move);
+            transform.position += dashDir * dashSpeed * Time.deltaTime;
             timer += Time.deltaTime;
 
-            if (!hitPlayer && Vector3.Distance(transform.position, player.position) <= 2f)
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+            if (!hitPlayer && distanceToPlayer <= dashHitRange)
             {
-                Health playerHealth = player.GetComponent<Health>();
-                if (playerHealth != null)
-                {
-                    playerHealth.TakeDamage(dashDamage);
-                    hitPlayer = true;
-                }
+                playerHealth.TakeDamage(dashDamage);
+                hitPlayer = true;
             }
 
             yield return null;
@@ -212,7 +254,7 @@ public class HeavyBossAI : MonoBehaviour
             anim.SetTrigger("Attack");
             if (audioSource != null && attackClip != null)
             {
-                audioSource.PlayOneShot(attackClip);
+                audioSource.PlayOneShot(attackClip, GetSFXVolume());
             }
         }
 

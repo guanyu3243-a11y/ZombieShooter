@@ -178,18 +178,21 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   dashWarningClip: {fileID: 0}
   dashClip: {fileID: 8300000, guid: 7b69beceabbd8f24e8bc62d77ac7ca1c, type: 3}
-  attackClip: {fileID: 0}
-  attackRange: 2.5
+  attackClip: {fileID: 8300000, guid: 29726c349dbf64b0aadfe8c9ec00d728, type: 3}
+  runClip: {fileID: 8300000, guid: cfaa31361f7ba4a23b747862467ff938, type: 3}
+  deathClip: {fileID: 8300000, guid: 05f860bb66f844d89908829a80c6fe13, type: 3}
+  attackRange: 3
   attackDamage: 30
   attackCooldown: 2
   dashCooldown: 6
   dashWarningTime: 1.2
-  dashSpeed: 15
+  dashSpeed: 20
   dashDuration: 0.6
   dashDamage: 50
   dashWarningPrefab: {fileID: 5887656330584062651, guid: ffff05edc6510124483fa0e4e619b21e, type: 3}
-  warningLength: 10
+  warningLength: 12
   warningWidth: 4
+  dashHitRange: 2
 --- !u!136 &566339089012798778
 CapsuleCollider:
   m_ObjectHideFlags: 0

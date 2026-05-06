@@ -86,13 +86,39 @@ public class SkillSelectionManager : MonoBehaviour
 
         Shuffle(majorSkillPool);
 
-        button1Skill = majorSkillPool[0];
-        button2Skill = majorSkillPool[1];
-        button3Skill = majorSkillPool[2];
+        // ÏÈÈ«²¿Òþ²Ø
+        button1Text.gameObject.SetActive(false);
+        button2Text.gameObject.SetActive(false);
+        button3Text.gameObject.SetActive(false);
 
-        button1Text.text = GetSkillName(button1Skill);
-        button2Text.text = GetSkillName(button2Skill);
-        button3Text.text = GetSkillName(button3Skill);
+        int count = Mathf.Min(3, majorSkillPool.Count);
+
+        if (count == 0)
+        {
+            CloseSkillSelection();
+            return;
+        }
+
+        if (count >= 1)
+        {
+            button1Skill = majorSkillPool[0];
+            button1Text.text = GetSkillName(button1Skill);
+            button1Text.gameObject.SetActive(true);
+        }
+
+        if (count >= 2)
+        {
+            button2Skill = majorSkillPool[1];
+            button2Text.text = GetSkillName(button2Skill);
+            button2Text.gameObject.SetActive(true);
+        }
+
+        if (count >= 3)
+        {
+            button3Skill = majorSkillPool[2];
+            button3Text.text = GetSkillName(button3Skill);
+            button3Text.gameObject.SetActive(true);
+        }
     }
     string GetSkillName(SkillType skill)
     {
@@ -174,7 +200,14 @@ public class SkillSelectionManager : MonoBehaviour
                 break;
         }
     }
+    public bool HasMajorSkillsLeft()
+{
+    if (PlayerStats.Instance == null) return false;
 
+    return !PlayerStats.Instance.multiShotUnlocked
+        || !PlayerStats.Instance.dashUnlocked
+        || !PlayerStats.Instance.enemySlowUnlocked;
+}
     public void ChooseButton1()
     {
         ApplySkill(button1Skill);

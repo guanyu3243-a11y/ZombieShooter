@@ -22,6 +22,12 @@ public class PlayerController : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip shootClip;
     public AudioClip slowClip;
+    private const string KEY_SFX = "SETTINGS_SFX";
+
+    private float GetSFXVolume()
+    {
+        return PlayerPrefs.GetFloat(KEY_SFX, 1f);
+    }
     void Start()
     {
         cc = GetComponent<CharacterController>();
@@ -94,7 +100,7 @@ public class PlayerController : MonoBehaviour
         fireTimer = finalCooldown;
         if (audioSource != null && shootClip != null)
         {
-            audioSource.PlayOneShot(shootClip);
+            audioSource.PlayOneShot(shootClip,GetSFXVolume());
         }
         if (PlayerStats.Instance != null && PlayerStats.Instance.multiShotUnlocked)
         {

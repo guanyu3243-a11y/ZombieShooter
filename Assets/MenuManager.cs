@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
+    [Header("Audio Sliders")]
+    public Slider bgmSlider;
+    public Slider sfxSlider;
+
+    public AudioSource bgmSource;
     [Header("Panels")]
     public GameObject menuPanel;        // （Start/Settings/Exit）
     public GameObject settingsPanel;    // （Slider + Back）
@@ -19,10 +24,15 @@ public class MenuManager : MonoBehaviour
     [Header("Scene Names")]
     public string gameSceneName = "Main";  //Loading "Main" scene
 
-    
+    [Header("Title UI")]
+    public GameObject titleText;
+    public GameObject subTitleText;
+
+
     private const string KEY_VOLUME = "SETTINGS_VOLUME";
     private const string KEY_SENSITIVITY = "SETTINGS_SENSITIVITY";
-
+    private const string KEY_BGM = "SETTINGS_BGM";
+    private const string KEY_SFX = "SETTINGS_SFX";
     // Default
     [Header("Default Values")]
     [Range(0f, 1f)] public float defaultVolume = 1f;
@@ -49,6 +59,18 @@ public class MenuManager : MonoBehaviour
 
         if (sensitivitySlider != null)
             sensitivitySlider.onValueChanged.AddListener(OnSensitivityChanged);
+
+        float bgm = PlayerPrefs.GetFloat(KEY_BGM, 1f);
+        float sfx = PlayerPrefs.GetFloat(KEY_SFX, 1f);
+
+        if (bgmSlider != null) bgmSlider.value = bgm;
+        if (sfxSlider != null) sfxSlider.value = sfx;
+
+        ApplyBGM(bgm);
+        ApplySFX(sfx);
+
+        bgmSlider.onValueChanged.AddListener(OnBGMChanged);
+        sfxSlider.onValueChanged.AddListener(OnSFXChanged);
     }
 
     // ======= Panel switch =======
@@ -57,13 +79,20 @@ public class MenuManager : MonoBehaviour
     {
         if (menuPanel != null) menuPanel.SetActive(true);
         if (settingsPanel != null) settingsPanel.SetActive(false);
+        SetTitleVisible(true);
     }
 
     public void ShowSettings()
     {
         if (menuPanel != null) menuPanel.SetActive(false);
         if (settingsPanel != null) settingsPanel.SetActive(true);
+        SetTitleVisible(false);
     }
+    void SetTitleVisible(bool visible)
+{
+    if (titleText != null) titleText.SetActive(visible);
+    if (subTitleText != null) subTitleText.SetActive(visible);
+}
 
     // ======= Button function =======
 
@@ -78,6 +107,7 @@ public class MenuManager : MonoBehaviour
     {
         menuPanel.SetActive(false);
         settingsPanel.SetActive(true);
+        SetTitleVisible(false);
     }
 
     // Back 
@@ -85,6 +115,7 @@ public class MenuManager : MonoBehaviour
     {
         settingsPanel.SetActive(false);
         menuPanel.SetActive(true);
+        SetTitleVisible(true);
     }
 
     // Exit
@@ -111,6 +142,19 @@ public class MenuManager : MonoBehaviour
         PlayerPrefs.SetFloat(KEY_SENSITIVITY, value);
         PlayerPrefs.Save();
     }
+    public void OnBGMChanged(float value)
+    {
+        ApplyBGM(value);
+        PlayerPrefs.SetFloat(KEY_BGM, value);
+        PlayerPrefs.Save();
+    }
+
+    public void OnSFXChanged(float value)
+    {
+        ApplySFX(value);
+        PlayerPrefs.SetFloat(KEY_SFX, value);
+        PlayerPrefs.Save();
+    }
 
     // ======= 应用设置 =======
 
@@ -127,5 +171,15 @@ public class MenuManager : MonoBehaviour
         {
             player.moveSpeed = value;
         }
+    }
+    private void ApplyBGM(float value)
+    {
+        if (bgmSource != null)
+            bgmSource.volume = value;
+    }
+
+    private void ApplySFX(float value)
+    {
+        // 这里只存值，真正用的时候再读
     }
 }
