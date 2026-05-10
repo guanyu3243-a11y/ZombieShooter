@@ -172,7 +172,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 3987117100405057966, guid: 8cbfbc452eb45c74e9b501eff0b17e01, type: 3}
   summonCount: 2
   baseSummonInterval: 5
-  lowHpSummonInterval: 2.5
+  lowHpSummonInterval: 3
   summonRadius: 5
   attackRange: 2.5
   attackDamage: 20

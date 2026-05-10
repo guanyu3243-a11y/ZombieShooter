@@ -73,11 +73,11 @@ public class HeavyBossAI : MonoBehaviour
             {
                 isDead = true;
 
-                // 停止跑步声
+                //stop running sound
                 if (audioSource != null)
                     audioSource.Stop();
 
-                // ? 播放死亡音效
+                // play death sound
                 if (audioSource != null && deathClip != null)
                     audioSource.PlayOneShot(deathClip, GetSFXVolume());
 
@@ -90,11 +90,11 @@ public class HeavyBossAI : MonoBehaviour
 
         if (isDead) return;
 
-        // ??? 一直追玩家（核心！！）
+        // keep tracing player
         if (!isDashing && !isAttacking && agent != null)
         {
             agent.SetDestination(player.position);
-            // ? 播放跑步声
+            // play running sound
             if (!isPlayingRun && runClip != null)
             {
                 audioSource.clip = runClip;
@@ -105,7 +105,7 @@ public class HeavyBossAI : MonoBehaviour
         }
         else
         {
-            // ? 停止跑步声
+            // stop running sound
             if (isPlayingRun)
             {
                 audioSource.Stop();
@@ -113,7 +113,7 @@ public class HeavyBossAI : MonoBehaviour
             }
         }
 
-        // ? 更新动画Speed
+        // running animation
         if (anim != null && agent != null)
         {
             anim.SetFloat("Speed", agent.velocity.magnitude);
@@ -134,12 +134,6 @@ public class HeavyBossAI : MonoBehaviour
         if (distance <= attackRange && attackTimer <= 0f)
         {
             attackTimer = attackCooldown;
-
-            Health playerHealth = player.GetComponent<Health>();
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(attackDamage);
-            }
 
             StartCoroutine(AttackRoutine());
 
@@ -259,6 +253,23 @@ public class HeavyBossAI : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.8f);
+
+        if (player != null)
+        {
+            float distance = Vector3.Distance(transform.position, player.position);
+
+            if (distance <= attackRange)
+            {
+                Health playerHealth = player.GetComponent<Health>();
+
+                if (playerHealth != null)
+                {
+                    playerHealth.TakeDamage(attackDamage);
+                }
+            }
+        }
+
+        yield return new WaitForSeconds(0.4f);
 
         if (agent != null)
         {

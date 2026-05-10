@@ -193,6 +193,7 @@ MonoBehaviour:
   warningLength: 12
   warningWidth: 4
   dashHitRange: 2
+  dashWidth: 3
 --- !u!136 &566339089012798778
 CapsuleCollider:
   m_ObjectHideFlags: 0

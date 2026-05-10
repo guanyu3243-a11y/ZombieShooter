@@ -64,12 +64,13 @@ public class Health : MonoBehaviour
             if (CompareTag("Player"))
             {
                 Debug.Log("GAME OVER");
-                if (UIManager.Instance != null) UIManager.Instance.ShowGameOver();
+                if (UIManager.Instance != null) 
+                    UIManager.Instance.ShowGameOver();
                 Time.timeScale = 0f;
             }
             else
             {
-                // Enemy Die,Score system
+                // Enemy Die
                 isDead = true;
 
 

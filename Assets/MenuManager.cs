@@ -156,7 +156,7 @@ public class MenuManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    // ======= 应用设置 =======
+    // ======= Apply setting =======
 
     private void ApplyVolume(float value)
     {
@@ -180,6 +180,6 @@ public class MenuManager : MonoBehaviour
 
     private void ApplySFX(float value)
     {
-        // 这里只存值，真正用的时候再读
+     
     }
 }

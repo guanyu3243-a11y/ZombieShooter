@@ -11,6 +11,7 @@ public class EnemyAI : MonoBehaviour
     private NavMeshAgent agent;
     private Animator anim;
     private float timer;
+    private GameObject slowEffect;
 
     void Start()
     {
@@ -59,6 +60,21 @@ public class EnemyAI : MonoBehaviour
         if (hp != null)
         {
             hp.TakeDamage(damagePerTick);
+        }
+    }
+    public void ShowSlowEffect(GameObject effectPrefab)
+    {
+        if (slowEffect != null) return;
+
+        slowEffect = Instantiate(effectPrefab, transform);
+        slowEffect.transform.localPosition = Vector3.zero;
+    }
+
+    public void HideSlowEffect()
+    {
+        if (slowEffect != null)
+        {
+            Destroy(slowEffect);
         }
     }
 }

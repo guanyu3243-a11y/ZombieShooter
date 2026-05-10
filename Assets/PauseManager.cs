@@ -24,7 +24,7 @@ public class PauseManager : MonoBehaviour
     {
         pauseMenu.SetActive(true);
         settingsPanel.SetActive(false);
-
+        AudioListener.pause = true;
         Time.timeScale = 0f;
 
         Cursor.lockState = CursorLockMode.None;
@@ -38,7 +38,7 @@ public class PauseManager : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         settingsPanel.SetActive(false);
-
+        AudioListener.pause = false;
         Time.timeScale = 1f;
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -64,8 +64,9 @@ public class PauseManager : MonoBehaviour
     // ===== Back to MainMenu =====
     public void ExitToMenu()
     {
+        AudioListener.pause = false;
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene("MainMenu");
     }
 
     

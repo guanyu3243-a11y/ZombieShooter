@@ -16,12 +16,18 @@ public class PlayerStats : MonoBehaviour
     public bool dashUnlocked = false;
     public bool multiShotUnlocked = false;
     public bool enemySlowUnlocked = false;
+
+    public int dashLevel = 0;
+    public int multiShotLevel = 0;
+    public int enemySlowLevel = 0;
+
     public float critChance = 0f;
     public float critMultiplier = 2f;
-    public float enemySlowMultiplier = 0.4f; // 敌人变成40%速度
+    public float enemySlowMultiplier = 0.4f; 
     public float enemySlowDuration = 5f;
     public float enemySlowCooldown = 5f;
     private float enemySlowTimer = 0f;
+    public GameObject slowEffectPrefab;
 
     public float EnemySlowTimer => enemySlowTimer;
     public float EnemySlowCooldown => enemySlowCooldown;
@@ -99,21 +105,35 @@ public class PlayerStats : MonoBehaviour
     public void UnlockDash()
     {
         dashUnlocked = true;
-        AddSkillRecord("Dash Unlock");
-        Debug.Log("Dash Unlocked");
+
+        dashLevel++;
+
+        AddSkillRecord("Dash Lv." + dashLevel);
+
+        Debug.Log("Dash Level: " + dashLevel);
     }
 
     public void UnlockMultiShot()
     {
         multiShotUnlocked = true;
-        AddSkillRecord("Multi Shot");
-        Debug.Log("Multi Shot Unlocked");
+
+        multiShotLevel++;
+
+        AddSkillRecord("Multi Shot Lv." + multiShotLevel);
+
+        Debug.Log("Multi Shot Level: " + multiShotLevel);
     }
     public void UnlockEnemySlow()
     {
         enemySlowUnlocked = true;
-        AddSkillRecord("Enemy Slow");
-        Debug.Log("Enemy Slow Unlocked");
+
+        enemySlowLevel++;
+
+        enemySlowCooldown = Mathf.Max(5f, enemySlowCooldown - 5f);
+
+        AddSkillRecord("Enemy Slow Lv." + enemySlowLevel);
+
+        Debug.Log("Enemy Slow Level: " + enemySlowLevel);
     }
     public bool TryUseEnemySlow()
     {
@@ -133,9 +153,15 @@ public class PlayerStats : MonoBehaviour
     }
     void Update()
     {
-        if (enemySlowTimer > 0f)
+        if (enemySlowTimer > 0)
         {
             enemySlowTimer -= Time.deltaTime;
+
+            if (enemySlowTimer <= 0)
+            {
+                enemySlowTimer = 0;
+                enemySlowReady = true;
+            }
         }
     }
     private IEnumerator EnemySlowRoutine()
@@ -147,6 +173,8 @@ public class PlayerStats : MonoBehaviour
         foreach (EnemyAI enemy in enemies)
         {
             enemy.moveSpeed *= enemySlowMultiplier;
+
+            enemy.ShowSlowEffect(slowEffectPrefab);
         }
 
         yield return new WaitForSeconds(enemySlowDuration);
@@ -156,12 +184,12 @@ public class PlayerStats : MonoBehaviour
             if (enemy != null)
             {
                 enemy.moveSpeed /= enemySlowMultiplier;
+
+                enemy.HideSlowEffect();
             }
+            enemySlowReady = true;
         }
 
-        yield return new WaitForSeconds(enemySlowCooldown);
-
-        enemySlowReady = true;
     }
     void AddSkillRecord(string skillName)
     {

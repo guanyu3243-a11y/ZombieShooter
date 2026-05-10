@@ -63,11 +63,11 @@ public class WaveManager : MonoBehaviour
 
         if (currentWave == 10)
         {
-            bossPrefab = summonerBossPrefab;
+            bossPrefab = heavyBossPrefab;
         }
         else if (currentWave == 20)
         {
-            bossPrefab = heavyBossPrefab;
+            bossPrefab = summonerBossPrefab;
         }
         else
         {
@@ -162,20 +162,20 @@ public class WaveManager : MonoBehaviour
         GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
 
       
-        // ===== 难度成长公式 =====
-        int enemyHP = 100 + (currentWave - 1) * 10;
+        // ===== Difficulty Growth Formula =====
+        int enemyHP = 50 + (currentWave - 1) * 10;
         int enemyDamage = 10 + (currentWave - 1);
         float enemySpeed = 3f + (currentWave - 1) * 0.2f;
         float attackInterval = Mathf.Max(0.3f, 1f - currentWave * 0.05f); // 越高越快攻击
 
-        // ===== 设置血量 =====
+        // ===== Set Health =====
         Health health = enemy.GetComponent<Health>();
         if (health != null)
         {
             health.SetMaxHP(enemyHP);
         }
 
-        // ===== 设置AI属性 =====
+        // ===== Set AI property =====
         EnemyAI ai = enemy.GetComponent<EnemyAI>();
         if (ai != null)
         {

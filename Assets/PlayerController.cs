@@ -32,13 +32,11 @@ public class PlayerController : MonoBehaviour
     {
         cc = GetComponent<CharacterController>();
         facingDir = Vector3.forward;
-        //moveSpeed = PlayerPrefs.GetFloat("SETTINGS_SENSITIVITY", moveSpeed);
     }
 
     void Update()
     {
         fireTimer -= Time.deltaTime;
-        if (dashTimer > 0f)
         if (dashTimer > 0f)
         {
             dashTimer -= Time.deltaTime;
@@ -65,7 +63,7 @@ public class PlayerController : MonoBehaviour
 
             // the player's orientation follows the direction of movement
             facingDir = dir;
-            transform.rotation = Quaternion.LookRotation(facingDir, Vector3.up);
+            transform.rotation = Quaternion.LookRotation(facingDir, Vector3.up); 
 
             float finalMoveSpeed = moveSpeed;
             if (PlayerStats.Instance != null)
@@ -73,11 +71,12 @@ public class PlayerController : MonoBehaviour
                 finalMoveSpeed = moveSpeed * PlayerStats.Instance.moveSpeedMultiplier;
             }
 
+             // follow the gravity
             cc.Move((dir * finalMoveSpeed + Vector3.down * 2f) * Time.deltaTime);
         }
         else
         {
-            // follow the gravity
+            
             cc.Move(Vector3.down * 2f * Time.deltaTime);
         }
 
@@ -104,9 +103,27 @@ public class PlayerController : MonoBehaviour
         }
         if (PlayerStats.Instance != null && PlayerStats.Instance.multiShotUnlocked)
         {
+            int level = PlayerStats.Instance.multiShotLevel;
+
             ShootBullet(facingDir);
+
+            // Lv1
             ShootBullet(Quaternion.Euler(0, -15, 0) * facingDir);
             ShootBullet(Quaternion.Euler(0, 15, 0) * facingDir);
+
+            // Lv2
+            if (level >= 2)
+            {
+                ShootBullet(Quaternion.Euler(0, -30, 0) * facingDir);
+                ShootBullet(Quaternion.Euler(0, 30, 0) * facingDir);
+            }
+
+            // Lv3
+            if (level >= 3)
+            {
+                ShootBullet(Quaternion.Euler(0, -45, 0) * facingDir);
+                ShootBullet(Quaternion.Euler(0, 45, 0) * facingDir);
+            }
         }
         else
         {
@@ -115,6 +132,7 @@ public class PlayerController : MonoBehaviour
     }
     void ShootBullet(Vector3 direction)
     {
+        //Bullet generated
         var b = Instantiate(bulletPrefab, transform.position + Vector3.up * 0.8f, Quaternion.identity);
         var rb = b.GetComponent<Rigidbody>();
 
@@ -138,7 +156,15 @@ public class PlayerController : MonoBehaviour
                 dashDir = transform.forward;
             }
 
-            cc.Move(dashDir.normalized * dashDistance);
+            float finalDashDistance = dashDistance;
+
+            if (PlayerStats.Instance != null)
+            {
+                finalDashDistance += PlayerStats.Instance.dashLevel * 2f;
+            }
+            finalDashDistance = Mathf.Min(finalDashDistance, 25f);
+            //dash
+            cc.Move(dashDir.normalized * finalDashDistance);
             dashTimer = dashCooldown;
 
             Debug.Log("Dash!");

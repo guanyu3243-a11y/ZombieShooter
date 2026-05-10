@@ -51,7 +51,7 @@ public class SkillSelectionManager : MonoBehaviour
         SkillType.Heal,
         SkillType.MaxHPUp
     };
-
+        //disrupt the order
         Shuffle(skillPool);
 
         button1Skill = skillPool[0];
@@ -73,52 +73,22 @@ public class SkillSelectionManager : MonoBehaviour
 
     void GenerateMajorSkills()
     {
-        List<SkillType> majorSkillPool = new List<SkillType>();
-
-        if (!PlayerStats.Instance.multiShotUnlocked)
-            majorSkillPool.Add(SkillType.MultiShot);
-
-        if (!PlayerStats.Instance.dashUnlocked)
-            majorSkillPool.Add(SkillType.DashUnlock);
-
-        if (!PlayerStats.Instance.enemySlowUnlocked)
-            majorSkillPool.Add(SkillType.EnemySlow);
+        List<SkillType> majorSkillPool = new List<SkillType>()
+    {
+        SkillType.MultiShot,
+        SkillType.DashUnlock,
+        SkillType.EnemySlow
+    };
 
         Shuffle(majorSkillPool);
 
-        // ÏÈÈ«²¿Òþ²Ø
-        button1Text.gameObject.SetActive(false);
-        button2Text.gameObject.SetActive(false);
-        button3Text.gameObject.SetActive(false);
+        button1Skill = majorSkillPool[0];
+        button2Skill = majorSkillPool[1];
+        button3Skill = majorSkillPool[2];
 
-        int count = Mathf.Min(3, majorSkillPool.Count);
-
-        if (count == 0)
-        {
-            CloseSkillSelection();
-            return;
-        }
-
-        if (count >= 1)
-        {
-            button1Skill = majorSkillPool[0];
-            button1Text.text = GetSkillName(button1Skill);
-            button1Text.gameObject.SetActive(true);
-        }
-
-        if (count >= 2)
-        {
-            button2Skill = majorSkillPool[1];
-            button2Text.text = GetSkillName(button2Skill);
-            button2Text.gameObject.SetActive(true);
-        }
-
-        if (count >= 3)
-        {
-            button3Skill = majorSkillPool[2];
-            button3Text.text = GetSkillName(button3Skill);
-            button3Text.gameObject.SetActive(true);
-        }
+        button1Text.text = GetSkillName(button1Skill);
+        button2Text.text = GetSkillName(button2Skill);
+        button3Text.text = GetSkillName(button3Skill);
     }
     string GetSkillName(SkillType skill)
     {

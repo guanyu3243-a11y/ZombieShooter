@@ -106,10 +106,6 @@ public class SummonerBossAI : MonoBehaviour
             return lowHpSummonInterval;
         }
 
-        if (hpPercent <= 0.6f)
-        {
-            return 3.5f;
-        }
 
         return baseSummonInterval;
     }
@@ -129,7 +125,6 @@ public class SummonerBossAI : MonoBehaviour
             summonedEnemies.Add(enemy);
         }
 
-        Debug.Log("Summoner Boss summoned enemies.");
     }
     void HandleAttack()
     {
@@ -156,7 +151,6 @@ public class SummonerBossAI : MonoBehaviour
                 anim.SetTrigger("Attack");
             }
 
-            Debug.Log("Summoner Boss attacked player.");
         }
     }
     public void ClearSummonedEnemies()
