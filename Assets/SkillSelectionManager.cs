@@ -37,6 +37,8 @@ public class SkillSelectionManager : MonoBehaviour
         {
             skillPanel.SetActive(true);
             Time.timeScale = 0f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 
@@ -69,6 +71,8 @@ public class SkillSelectionManager : MonoBehaviour
             audioSource.PlayOneShot(openSkillPanelClip);
         skillPanel.SetActive(true);
         Time.timeScale = 0f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     void GenerateMajorSkills()
@@ -202,6 +206,8 @@ public class SkillSelectionManager : MonoBehaviour
         {
             skillPanel.SetActive(false);
             Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
 
         WaveManager waveManager = FindFirstObjectByType<WaveManager>();

@@ -166,7 +166,7 @@ public class WaveManager : MonoBehaviour
         int enemyHP = 50 + (currentWave - 1) * 10;
         int enemyDamage = 10 + (currentWave - 1);
         float enemySpeed = 3f + (currentWave - 1) * 0.2f;
-        float attackInterval = Mathf.Max(0.3f, 1f - currentWave * 0.05f); // 越高越快攻击
+        float attackInterval = Mathf.Max(0.3f, 1f - currentWave * 0.05f); 
 
         // ===== Set Health =====
         Health health = enemy.GetComponent<Health>();
@@ -207,7 +207,7 @@ public class WaveManager : MonoBehaviour
         float delay = IsBossWave(currentWave) ? bossWaveDelay : normalWaveDelay;
         yield return new WaitForSeconds(delay);
 
-        // Boss前一波
+       
         if ((currentWave + 1) % 10 == 0)
         {
             if (SkillSelectionManager.Instance.HasMajorSkillsLeft())

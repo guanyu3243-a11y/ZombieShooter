@@ -4020,7 +4020,7 @@ MonoBehaviour:
   moveSpeedMultiplier: 1
   dashUnlocked: 0
   multiShotUnlocked: 0
-  enemySlowUnlocked: 1
+  enemySlowUnlocked: 0
   dashLevel: 0
   multiShotLevel: 0
   enemySlowLevel: 0
@@ -5265,7 +5265,7 @@ MonoBehaviour:
   player: {fileID: 1517716858}
   minSpawnDistance: 10
   maxSpawnDistance: 16
-  currentWave: 19
+  currentWave: 0
   baseEnemyCount: 5
   normalWaveDelay: 3
   bossWaveDelay: 6
